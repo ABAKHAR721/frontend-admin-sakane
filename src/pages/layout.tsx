@@ -1,0 +1,33 @@
+import './globals.css'
+import { Inter } from 'next/font/google';
+import { AuthProvider } from '@/hooks/useAuth';
+import Sidebar from '@/components/Sidebar';
+
+const inter = Inter({
+  subsets: ['latin'],
+  display: 'swap',
+})
+
+export const metadata = {
+  title: 'Sakane Ask - Dashboard',
+  description: 'Tableau de bord pour la gestion des demandes immobilières',
+}
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <html lang="fr">
+      <body className={`${inter.variable} antialiased h-full`}> 
+        <AuthProvider>
+          <div className="flex">
+            <Sidebar />
+            <main className="flex-1">{children}</main>
+          </div>
+        </AuthProvider>
+      </body>
+    </html>
+  )
+}
