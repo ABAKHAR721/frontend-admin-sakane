@@ -108,12 +108,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const logout = () => {
-        localStorage.removeItem('token');
-        document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
-        setUser(null);
-        setIsAuthenticated(false);
-        router.push('/login');
+    const logout = async () => {
+        try {
+            setLoading(true);
+            
+            // Clear all auth state first
+            await authService.logout();
+            setUser(null);
+            setIsAuthenticated(false);
+            
+            // Force immediate navigation to login
+            window.location.href = '/login';
+        } catch (error) {
+            console.error('Logout error:', error);
+            // Even if there's an error, try to redirect to login
+            window.location.href = '/login';
+        }
     };
 
     const value = {

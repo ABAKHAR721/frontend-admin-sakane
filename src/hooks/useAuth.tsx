@@ -81,15 +81,30 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      console.log('useAuth - Logout')
-      await axios.post('/auth/logout')
-      setUser(null)
-      window.location.replace('/login')
+      // Clear all auth state
+      document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; secure; samesite=strict';
+      localStorage.removeItem('token');
+      sessionStorage.clear();
+      delete axios.defaults.headers.common['Authorization'];
+      
+      // Clear user state
+      setUser(null);
+      
+      // Clear any cached responses
+      if ('caches' in window) {
+        const cacheNames = await window.caches.keys();
+        await Promise.all(
+          cacheNames.map(cacheName => window.caches.delete(cacheName))
+        );
+      }
+      
+      // Force navigation to login
+      window.location.href = '/login';
     } catch (error) {
-      console.error('useAuth - Logout error:', error)
-      // Même en cas d'erreur, on déconnecte l'utilisateur localement
-      setUser(null)
-      window.location.replace('/login')
+      console.error('useAuth - Logout error:', error);
+      // Even if there's an error, try to clear state and redirect
+      setUser(null);
+      window.location.href = '/login';
     }
   }
 

@@ -11,6 +11,11 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const lowercasePath = pathname.toLowerCase()
 
+  // Special case for logout - always allow
+  if (lowercasePath === '/logout') {
+    return NextResponse.next()
+  }
+
   // For protected paths, verify token
   if (protectedPaths.some(path => lowercasePath.startsWith(path))) {
     if (!token) {

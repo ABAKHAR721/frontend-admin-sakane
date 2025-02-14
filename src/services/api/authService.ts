@@ -47,12 +47,31 @@ export const signup = async (credentials: SignupCredentials): Promise<AuthRespon
     }
 };
 
-export const logout = () => {
+export const clearAuthState = () => {
     // Clear token from both cookie and localStorage
-    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
+    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT; secure; samesite=strict';
     localStorage.removeItem("token");
+    sessionStorage.clear();
+    
+    // Clear axios headers
     delete axios.defaults.headers.common['Authorization'];
-    window.location.replace("/login");
+};
+
+export const logout = async () => {
+    try {
+        clearAuthState();
+        
+        // Clear any cached responses
+        if ('caches' in window) {
+            const cacheNames = await window.caches.keys();
+            await Promise.all(
+                cacheNames.map(cacheName => window.caches.delete(cacheName))
+            );
+        }
+    } catch (error) {
+        console.error('Logout error:', error);
+        throw error;
+    }
 };
 
 export const getCurrentUser = async (): Promise<AuthResponse> => {
