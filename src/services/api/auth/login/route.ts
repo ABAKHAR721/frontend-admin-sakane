@@ -1,5 +1,4 @@
 import { NextResponse } from 'next/server'
-import prisma from '@/lib/db'
 import { verifyPassword, generateToken } from '@/lib/auth'
 
 export async function POST(request: Request) {
@@ -16,74 +15,63 @@ export async function POST(request: Request) {
       )
     }
 
-    // Trouver l'utilisateur
-    const user = await prisma.user.findUnique({
-      where: { email }
+    // Communiquer avec le backend pour l'authentification
+    const backendResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await backendResponse.json();
+
+    // Si la réponse n'est pas ok, retourner l'erreur du backend
+    if (!backendResponse.ok) {
+      console.log('Authentication failed:', data.error);
+      return NextResponse.json(
+        { error: data.error || 'Email ou mot de passe incorrect' },
+        { status: backendResponse.status }
+      );
+    }
+
+    // Create token from backend response
+    const token = data.token || data.access_token;
+
+    if (!token) {
+      console.error('No token received from backend');
+      return NextResponse.json(
+        { error: 'Authentication error' },
+        { status: 500 }
+      );
+    }
+
+    // Create response with user data and token
+    const response = NextResponse.json({
+      success: true,
+      user: data.user,
+      token: token
+    });
+
+    // Set cookie with strict options
+    const cookieOptions = {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax' as const,
+      path: '/',
+      maxAge: 7 * 24 * 60 * 60 // 7 days
+    }
+
+    // Définir le cookie avec le token reçu du backend
+    response.cookies.set('token', data.token, cookieOptions)
+
+    console.log('Login successful for user:', {
+      userId: data.user.id,
+      cookieOptions
     })
 
-    if (!user) {
-      console.log('User not found:', email)
-      return NextResponse.json(
-        { error: 'Email ou mot de passe incorrect' },
-        { status: 401 }
-      )
-    }
+    return response;
 
-    // Vérifier le mot de passe
-    const isValid = await verifyPassword(password, user.password)
-    if (!isValid) {
-      console.log('Invalid password for user:', email)
-      return NextResponse.json(
-        { error: 'Email ou mot de passe incorrect' },
-        { status: 401 }
-      )
-    }
-
-    try {
-      // Générer le token
-      const token = await generateToken(user.id)
-      console.log('Generated token for user:', {
-        userId: user.id,
-        tokenPreview: token.slice(0, 10) + '...'
-      })
-      
-      // Créer la réponse avec les headers CORS
-      const response = NextResponse.json({
-        success: true,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          credits: user.credits,
-          role: user.role,
-        }
-      })
-
-      // Définir le cookie avec des options plus strictes
-      const cookieOptions = {
-        httpOnly: true,
-        secure: false, // Mettre à true en production
-        sameSite: 'lax' as const,
-        path: '/',
-        maxAge: 7 * 24 * 60 * 60 // 7 jours
-      }
-
-      // Définir le cookie
-      response.cookies.set('token', token, cookieOptions)
-
-      console.log('Login successful for user:', {
-        userId: user.id,
-        cookieOptions
-      })
-
-      return response
-    } catch (tokenError) {
-      console.error('Token generation error:', tokenError)
-      return NextResponse.json(
-        { error: 'Erreur lors de la génération du token' },
-        { status: 500 }
-      )
-    }
   } catch (error) {
     console.error('Login error:', error)
     return NextResponse.json(

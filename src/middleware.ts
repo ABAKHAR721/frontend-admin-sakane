@@ -2,60 +2,28 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 // Paths that require authentication
-const protectedPaths = ['/dashboard', '/profile']
+const protectedPaths = ['/dashboard', '/profile', '/myleads', '/leads']
 // Paths that should be accessible only to non-authenticated users
-const authPaths = ['/login']
+const authPaths = ['/login', '/register']
 
 export async function middleware(request: NextRequest) {
   const token = request.cookies.get('token')?.value
   const { pathname } = request.nextUrl
+  const lowercasePath = pathname.toLowerCase()
 
-  // For protected paths, verify token with /api/auth/me
-  if (protectedPaths.some(path => pathname.startsWith(path))) {
+  // For protected paths, verify token
+  if (protectedPaths.some(path => lowercasePath.startsWith(path))) {
     if (!token) {
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('from', pathname)
-      return NextResponse.redirect(loginUrl)
+      return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    try {
-      // Verify token validity using our existing auth endpoint
-      const response = await fetch(`${request.nextUrl.origin}/api/auth/me`, {
-        headers: {
-          'Cookie': `token=${token}`,
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      if (!response.ok) {
-        const loginUrl = new URL('/login', request.url)
-        loginUrl.searchParams.set('from', pathname)
-        return NextResponse.redirect(loginUrl)
-      }
-    } catch (error) {
-      const loginUrl = new URL('/login', request.url)
-      loginUrl.searchParams.set('from', pathname)
-      return NextResponse.redirect(loginUrl)
-    }
+    // User has token, allow access
+    return NextResponse.next()
   }
 
-  // Prevent authenticated users from accessing auth pages
-  if (authPaths.includes(pathname) && token) {
-    try {
-      const response = await fetch(`${request.nextUrl.origin}/api/auth/me`, {
-        headers: {
-          'Cookie': `token=${token}`,
-          'Authorization': `Bearer ${token}`
-        }
-      })
-
-      if (response.ok) {
-        return NextResponse.redirect(new URL('/dashboard', request.url))
-      }
-    } catch (error) {
-      // If token verification fails, allow access to auth pages
-      return NextResponse.next()
-    }
+  // For auth paths, redirect to dashboard if already authenticated
+  if (authPaths.some(path => lowercasePath.startsWith(path)) && token) {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   return NextResponse.next()
@@ -65,12 +33,12 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public files (public directory)
-     * - api routes
+     * 1. /api/ (API routes)
+     * 2. /_next/ (Next.js internals)
+     * 3. /_static (inside /public)
+     * 4. /_vercel (Vercel internals)
+     * 5. all root files inside /public (e.g. /favicon.ico)
      */
-    '/((?!_next/static|_next/image|favicon.ico|public|api).*)',
+    '/((?!api|_next|_static|_vercel|[\\w-]+\\.\\w+).*)',
   ],
 }

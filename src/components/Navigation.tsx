@@ -4,9 +4,19 @@ import { useAuth } from '@/hooks/useAuth'
 import Link from 'next/link'
 import { useCredit } from '@/contexts/CreditContext'
 
+import { usePathname } from 'next/navigation'
+
+const AUTH_PATHS = ['/login', '/signup', '/forgot-password']
+
 export default function Navigation() {
   const { user, logout } = useAuth()
   const { credit } = useCredit()
+  const pathname = usePathname()
+
+  // Don't render navigation on auth pages
+  if (AUTH_PATHS.includes(pathname)) {
+    return null
+  }
 
   return (
     <nav className="bg-white shadow-sm">
@@ -17,6 +27,12 @@ export default function Navigation() {
               <span className="text-2xl font-bold text-gray-900">Sakane Ask</span>
             </div>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <Link
+                href="/dashboard"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Dashboard
+              </Link>
               <Link
                 href="/leads"
                 className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"

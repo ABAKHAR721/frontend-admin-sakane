@@ -162,7 +162,7 @@ export default function MyLeadsPage() {
       render: (_, row: MyLead) => (
         <div className="space-x-2">
           <Link
-            href={`/myleads/${row.id}`}
+            href={`/myleads/${row.lead_id}`}
             className="px-3 py-1 text-sm text-white bg-indigo-600 rounded hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
           >
             Détails

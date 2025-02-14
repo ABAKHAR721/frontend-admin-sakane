@@ -21,7 +21,7 @@ export const purchaseLead = async (leadId: string) => {
 
 export const getMyLeads = async () => {
     try {
-        const { data } = await axios.get("/my-leads");
+        const { data } = await axios.get("/myleads");
         return data;
     } catch (error) {
         throw error;

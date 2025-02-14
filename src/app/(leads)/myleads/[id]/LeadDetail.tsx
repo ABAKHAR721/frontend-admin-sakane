@@ -67,9 +67,9 @@ export default function LeadDetail({ id }: { id: string }) {
   const handleStatusChange = async (newStatus: LeadStatusType) => {
     try {
       await axios.put(`/myleads/${id}/status`, {
-        status: newStatus,
+        status: LEAD_STATUS[newStatus], // Send the display value instead of the key
       })
-      setLead(lead => lead ? { ...lead, status: newStatus } : null)
+      setLead(lead => lead ? { ...lead, status: LEAD_STATUS[newStatus] } : null)
       toast.success('Statut mis à jour avec succès')
     } catch (error) {
       console.error('Error updating status:', error)
@@ -120,7 +120,8 @@ export default function LeadDetail({ id }: { id: string }) {
         </button>
 
         <select
-          value={lead.status}
+          value={Object.entries(LEAD_STATUS).find(([_, value]) => value === lead.status)?.[0] || 'NEW'}
+          // The backend returns the display value, so we need to find the key that matches it
           onChange={(e) => handleStatusChange(e.target.value as LeadStatusType)}
           className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
