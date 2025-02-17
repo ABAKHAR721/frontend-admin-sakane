@@ -3,7 +3,7 @@ import Axios from "axios";
 import { useRouter } from 'next/navigation';
 
 const axios = Axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000',
+    baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://sakane-market-back.onrender.com',
 });
 
 axios.interceptors.request.use((config) => {
