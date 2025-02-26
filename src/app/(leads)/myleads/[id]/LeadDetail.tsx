@@ -12,13 +12,7 @@ import { toast } from 'react-hot-toast'
 import { LatLngExpression } from 'leaflet'
 import type { MapProps } from '@/components/Map'
 
-// Fix for default marker icon in Leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '/marker-icon-2x.png',
-  iconUrl: '/marker-icon.png',
-  shadowUrl: '/marker-shadow.png',
-})
+// Leaflet initialization will be done in useEffect
 
 const Map = dynamic<MapProps>(() => import('@/components/Map').then(mod => mod.Map), { ssr: false })
 
@@ -49,6 +43,16 @@ interface Lead {
 
 function LeadDetail({ id }: { id: string }) {
   const [lead, setLead] = useState<Lead | null>(null)
+
+  useEffect(() => {
+    // Fix for default marker icon in Leaflet
+    delete (L.Icon.Default.prototype as any)._getIconUrl
+    L.Icon.Default.mergeOptions({
+      iconRetinaUrl: '/marker-icon-2x.png',
+      iconUrl: '/marker-icon.png',
+      shadowUrl: '/marker-shadow.png',
+    })
+  }, [])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
 
