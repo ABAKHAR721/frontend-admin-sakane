@@ -4,8 +4,11 @@ import { useRouter } from 'next/navigation';
 
 console.log('API URL:', process.env.NEXT_PUBLIC_API_URL || 'https://lead.sakane.ma/api');
 
+const API_URL = 'https://lead.sakane.ma/api';
+console.log('Using API URL:', API_URL);
+
 const axios = Axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://lead.sakane.ma/api',
+    baseURL: API_URL,
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
