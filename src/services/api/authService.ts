@@ -8,7 +8,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
         document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT';
         delete axios.defaults.headers.common['Authorization'];
 
-        const { data, status } = await axios.post("/auth/login", credentials);
+        const { data, status } = await axios.post("/api/auth/login", credentials);
         
         if (data.token) {
             // Set token in both localStorage and cookie
@@ -17,7 +17,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
             axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
 
             // Verify token immediately
-            const verifyResponse = await axios.get("/auth/me", {
+            const verifyResponse = await axios.get("/api/auth/me", {
                 headers: {
                     'Authorization': `Bearer ${data.token}`
                 }
@@ -40,7 +40,7 @@ export const login = async (credentials: LoginCredentials): Promise<AuthResponse
 
 export const signup = async (credentials: SignupCredentials): Promise<AuthResponse> => {
     try {
-        const { data, status } = await axios.post("/auth/signup", credentials);
+        const { data, status } = await axios.post("/api/auth/signup", credentials);
         return { data, status };
     } catch (error) {
         throw error;
