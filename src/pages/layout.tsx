@@ -8,11 +8,6 @@ const inter = Inter({
   display: 'swap',
 })
 
-export const metadata = {
-  title: 'Sakane Ask - Dashboard',
-  description: 'Tableau de bord pour la gestion des demandes immobilières',
-}
-
 export default function RootLayout({
   children,
 }: {

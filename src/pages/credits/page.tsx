@@ -1,9 +1,4 @@
-import { Metadata } from 'next'
-
-export const metadata: Metadata = {
-  title: 'Historique des Crédits - Sakane Ask',
-  description: 'Historique de vos transactions de crédits sur Sakane Ask',
-}
+import Head from 'next/head'
 
 export default function CreditsPage() {
   return (
