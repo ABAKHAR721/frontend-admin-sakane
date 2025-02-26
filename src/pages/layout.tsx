@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body className={`${inter.variable} antialiased h-full`}> 
+      <body className={`${inter.className} antialiased h-full`}> 
         <AuthProvider>
           <div className="flex">
             <Sidebar />

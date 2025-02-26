@@ -33,6 +33,12 @@ export default function RequestDetail() {
 
   useEffect(() => {
     const fetchRequest = async () => {
+      if (!params?.id) {
+        setError('Request ID not found')
+        setLoading(false)
+        return
+      }
+
       try {
         const response = await fetch(`/api/property-requests/${params.id}`)
         if (!response.ok) {
@@ -49,9 +55,14 @@ export default function RequestDetail() {
     }
 
     fetchRequest()
-  }, [params.id])
+  }, [params?.id])
 
   const handleStatusChange = async (newStatus: string) => {
+    if (!params?.id) {
+      setError('Request ID not found')
+      return
+    }
+
     try {
       const response = await fetch(`/api/property-requests/${params.id}`, {
         method: 'PATCH',

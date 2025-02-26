@@ -14,7 +14,7 @@ export default function Navigation() {
   const pathname = usePathname()
 
   // Don't render navigation on auth pages
-  if (AUTH_PATHS.includes(pathname)) {
+  if (pathname && AUTH_PATHS.includes(pathname)) {
     return null
   }
 

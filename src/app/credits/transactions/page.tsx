@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import axios from '@/services/api/request'
 import Table from '@/components/Table'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -23,20 +23,20 @@ export default function TransactionsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { credit, refreshCredit } = useCredit()
 
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const response = await axios.get('/credits/transactions')
-        setTransactions(response.data)
-      } catch (error) {
-        console.error('Error fetching transactions:', error)
-      } finally {
-        setLoading(false)
-      }
+  const fetchTransactions = useCallback(async () => {
+    try {
+      const response = await axios.get('/credits/transactions')
+      setTransactions(response.data)
+    } catch (error) {
+      console.error('Error fetching transactions:', error)
+    } finally {
+      setLoading(false)
     }
-
-    fetchTransactions()
   }, [])
+
+  useEffect(() => {
+    fetchTransactions()
+  }, [fetchTransactions])
 
   const columns = [
     {

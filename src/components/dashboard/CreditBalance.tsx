@@ -9,6 +9,8 @@ export default function CreditBalance() {
 
   useEffect(() => {
     const fetchCredits = async () => {
+      if (!user) return;
+      
       try {
         const response = await fetch(`/api/users/${user.id}`);
         const data = await response.json();

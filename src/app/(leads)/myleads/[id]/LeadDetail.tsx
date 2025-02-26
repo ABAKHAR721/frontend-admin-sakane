@@ -1,14 +1,16 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import dynamic from 'next/dynamic'
 import axios from '@/services/api/request'
 import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { LEAD_STATUS, LeadStatusType } from '@/constants/leadStatus'
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import L from 'leaflet'
 import { toast } from 'react-hot-toast'
+import { LatLngExpression } from 'leaflet'
+import type { MapProps } from '@/components/Map'
 
 // Fix for default marker icon in Leaflet
 delete (L.Icon.Default.prototype as any)._getIconUrl
@@ -17,6 +19,8 @@ L.Icon.Default.mergeOptions({
   iconUrl: '/marker-icon.png',
   shadowUrl: '/marker-shadow.png',
 })
+
+const Map = dynamic<MapProps>(() => import('@/components/Map').then(mod => mod.Map), { ssr: false })
 
 interface Lead {
   id: string
@@ -43,7 +47,7 @@ interface Lead {
   }
 }
 
-export default function LeadDetail({ id }: { id: string }) {
+function LeadDetail({ id }: { id: string }) {
   const [lead, setLead] = useState<Lead | null>(null)
   const [loading, setLoading] = useState(true)
   const router = useRouter()
@@ -67,9 +71,9 @@ export default function LeadDetail({ id }: { id: string }) {
   const handleStatusChange = async (newStatus: LeadStatusType) => {
     try {
       await axios.put(`/myleads/${id}/status`, {
-        status: LEAD_STATUS[newStatus], // Send the display value instead of the key
+        status: newStatus
       })
-      setLead(lead => lead ? { ...lead, status: LEAD_STATUS[newStatus] } : null)
+      setLead(lead => lead ? { ...lead, status: newStatus } : null)
       toast.success('Statut mis à jour avec succès')
     } catch (error) {
       console.error('Error updating status:', error)
@@ -120,12 +124,11 @@ export default function LeadDetail({ id }: { id: string }) {
         </button>
 
         <select
-          value={Object.entries(LEAD_STATUS).find(([_, value]) => value === lead.status)?.[0] || 'NEW'}
-          // The backend returns the display value, so we need to find the key that matches it
+          value={lead.status}
           onChange={(e) => handleStatusChange(e.target.value as LeadStatusType)}
           className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          {Object.entries(LEAD_STATUS).map(([key, value]) => (
+          {(Object.entries(LEAD_STATUS) as [LeadStatusType, string][]).map(([key, value]) => (
             <option key={key} value={key}>
               {value}
             </option>
@@ -191,21 +194,11 @@ export default function LeadDetail({ id }: { id: string }) {
           {lead.lead.latitude && lead.lead.longitude && (
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-4">Localisation</h3>
-              <div className="h-[400px] rounded-lg overflow-hidden">
-                <MapContainer
-                  center={[lead.lead.latitude, lead.lead.longitude]}
-                  zoom={13}
-                  style={{ height: '100%', width: '100%' }}
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  />
-                  <Marker position={[lead.lead.latitude, lead.lead.longitude]}>
-                    <Popup>{lead.lead.contact_name}</Popup>
-                  </Marker>
-                </MapContainer>
-              </div>
+              <Map 
+                latitude={lead.lead.latitude} 
+                longitude={lead.lead.longitude} 
+                address={lead.lead.address} 
+              />
             </div>
           )}
         </CardContent>
@@ -213,3 +206,5 @@ export default function LeadDetail({ id }: { id: string }) {
     </div>
   )
 }
+
+export default LeadDetail;

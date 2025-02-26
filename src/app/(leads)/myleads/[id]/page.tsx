@@ -1,14 +1,11 @@
-import { Suspense } from 'react'
 import LeadDetail from './LeadDetail'
-import Loading from './loading'
-import { PageProps } from 'next/navigation'
 
-export default function Page({ params }: PageProps): JSX.Element {
-  const id = params?.id as string;
+type Props = {
+  params: Promise<{ id: string }>
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}
 
-  return (
-    <Suspense fallback={<Loading />}>
-      <LeadDetail id={id} />
-    </Suspense>
-  )
+export default async function Page(props: Props) {
+  const [params, searchParams] = await Promise.all([props.params, props.searchParams])
+  return <LeadDetail id={params.id} />
 }

@@ -15,6 +15,7 @@ interface User {
 interface AuthContextType {
   user: User | null
   loading: boolean
+  isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
   logout: () => Promise<void>
   refreshUser: () => Promise<void>
@@ -25,6 +26,7 @@ const AuthContext = createContext<AuthContextType | null>(null)
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
+  const [isAuthenticated, setIsAuthenticated] = useState(false)
   const router = useRouter()
 
   const refreshUser = async () => {
@@ -33,6 +35,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!token) {
         console.log('useAuth - No token found')
         setUser(null)
+        setIsAuthenticated(false)
         setLoading(false)
         return
       }
@@ -41,6 +44,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data } = await axios.get('/auth/me')
       console.log('useAuth - User refreshed:', data.user ? 'Found' : 'Not found')
       setUser(data.user)
+      setIsAuthenticated(!!data.user)
     } catch (error: any) {
       if (error.response?.status === 401) {
         console.log('useAuth - Not authenticated')
@@ -49,6 +53,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('useAuth - Error refreshing user:', error)
       }
       setUser(null)
+      setIsAuthenticated(false)
     } finally {
       setLoading(false)
     }
@@ -70,6 +75,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       
       setUser(data.user)
+      setIsAuthenticated(!!data.user)
       
       // Rediriger vers la page d'accueil
       window.location.replace('/')
@@ -89,6 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // Clear user state
       setUser(null);
+      setIsAuthenticated(false);
       
       // Clear any cached responses
       if ('caches' in window) {
@@ -104,12 +111,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('useAuth - Logout error:', error);
       // Even if there's an error, try to clear state and redirect
       setUser(null);
+      setIsAuthenticated(false);
       window.location.href = '/login';
     }
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, isAuthenticated, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )

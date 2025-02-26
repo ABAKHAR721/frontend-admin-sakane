@@ -1,15 +1,32 @@
 import { useState } from 'react';
 import { useLeads } from '../hooks/useLeads';
 import { Lead } from '../types/leads';
+import { addLead, updateLead, deleteLead } from '../services/api/leads';
 
 export default function Leads() {
-  const { leads, loading, error, purchaseLead } = useLeads();
+  const { leads, loading, error, refreshLeads, purchaseLead } = useLeads();
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
+  const [newLead, setNewLead] = useState<Partial<Lead>>({
+    mode: '',
+    type: '',
+    bedrooms: '',
+    area: '',
+    budget: '',
+    rental_duration: '',
+    timing: '',
+    address: '',
+    lat: null,
+    lng: null,
+    contact_name: '',
+    contact_email: '',
+    contact_phone: '',
+    status: 'new'
+  });
 
   const handleAddLead = async () => {
     try {
-      const addedLead = await addLead(newLead);
-      setLeads([...leads, addedLead]);
+      await addLead(newLead);
+      await refreshLeads();
       setNewLead({
         mode: '',
         type: '',
@@ -31,23 +48,31 @@ export default function Leads() {
     }
   };
 
-  const handleUpdateLead = async (leadId) => {
+  const handleUpdateLead = async (leadId: string) => {
     try {
-      const updatedLead = await updateLead(leadId, newLead);
-      setLeads(leads.map(lead => lead.id === leadId ? updatedLead : lead));
+      await updateLead(leadId, newLead);
+      await refreshLeads();
     } catch (error) {
       console.error('Failed to update lead:', error);
     }
   };
 
-  const handleDeleteLead = async (leadId) => {
+  const handleDeleteLead = async (leadId: string) => {
     try {
       await deleteLead(leadId);
-      setLeads(leads.filter(lead => lead.id !== leadId));
+      await refreshLeads();
     } catch (error) {
       console.error('Failed to delete lead:', error);
     }
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
     <div>
