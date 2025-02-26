@@ -2,6 +2,8 @@ import { createContext, useContext } from "react";
 import Axios from "axios";
 import { useRouter } from 'next/navigation';
 
+console.log('API URL:', process.env.NEXT_PUBLIC_API_URL || 'https://lead.sakane.ma/api');
+
 const axios = Axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://lead.sakane.ma/api',
     withCredentials: true,
