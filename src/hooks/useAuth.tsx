@@ -18,6 +18,7 @@ interface AuthContextType {
   loading: boolean
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
+  signup: (data: { name: string; email: string; password: string }) => Promise<void>
   logout: () => Promise<void>
   refreshUser: () => Promise<void>
 }
@@ -121,8 +122,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const signup = async (data: { name: string; email: string; password: string }) => {
+    try {
+      await authService.signup(data)
+    } catch (error: any) {
+      console.error('Signup error:', error)
+      throw new Error(error.response?.data?.message || 'Erreur lors de l\'inscription')
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, isAuthenticated, login, logout, refreshUser }}>
+    <AuthContext.Provider value={{ user, loading, isAuthenticated, login, signup, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   )
