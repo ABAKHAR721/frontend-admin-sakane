@@ -4,6 +4,10 @@ import { useRouter } from 'next/navigation';
 
 const axios = Axios.create({
     baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://lead.sakane.ma/api',
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json'
+    }
 });
 
 axios.interceptors.request.use((config) => {
