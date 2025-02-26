@@ -1,4 +1,10 @@
 /** @type {import('next').NextConfig} */
+import dotenv from 'dotenv';
+
+// Load environment variables from the appropriate .env file
+const envFile = process.env.NODE_ENV === 'production' ? '.env.production' : '.env';
+dotenv.config({ path: envFile });
+
 const config = {
   reactStrictMode: true,
   env: {
