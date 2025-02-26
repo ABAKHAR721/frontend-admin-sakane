@@ -1,6 +1,7 @@
 'use client'
 
 interface AuthInputProps {
+  id?: string
   label: string
   type: string
   value: string
@@ -10,6 +11,7 @@ interface AuthInputProps {
 }
 
 export default function AuthInput({
+  id,
   label,
   type,
   value,
@@ -25,7 +27,7 @@ export default function AuthInput({
       <div className="mt-2">
         <input
           type={type}
-          id={label.toLowerCase()}
+          id={id || label.toLowerCase()}
           value={value}
           onChange={(e) => onChange(e.target.value)}
           required={required}

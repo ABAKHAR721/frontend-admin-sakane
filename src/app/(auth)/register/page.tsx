@@ -74,7 +74,7 @@ export default function RegisterPage() {
             type="text"
             label="Nom complet"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(value) => setName(value)}
             required
           />
 
@@ -83,7 +83,7 @@ export default function RegisterPage() {
             type="email"
             label="Adresse email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(value) => setEmail(value)}
             required
           />
 
@@ -92,7 +92,7 @@ export default function RegisterPage() {
             type="password"
             label="Mot de passe"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(value) => setPassword(value)}
             required
           />
 
@@ -101,7 +101,7 @@ export default function RegisterPage() {
             type="password"
             label="Confirmer le mot de passe"
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            onChange={(value) => setConfirmPassword(value)}
             required
           />
 
