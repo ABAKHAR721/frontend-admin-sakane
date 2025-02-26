@@ -3,13 +3,14 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 import { useRouter } from 'next/navigation'
 import axios from '@/services/api/request'
+import * as authService from '@/services/api/authService'
 
 interface User {
-  id: number
+  id: string
   name: string
   email: string
-  credits: number
-  role: string
+  credits?: number
+  role?: string
 }
 
 interface AuthContextType {
@@ -66,17 +67,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       console.log('useAuth - Login attempt')
-      console.log('Making request to:', axios.defaults.baseURL + '/auth/login');
-      const { data } = await axios.post('/auth/login', { email, password })
+      const response = await authService.login({ email, password })
       console.log('useAuth - Login successful')
       
-      // Sauvegarder le token
-      if (data.token) {
-        localStorage.setItem('token', data.token)
+      if (!response.data) {
+        throw new Error('Login response is empty')
       }
       
-      setUser(data.user)
-      setIsAuthenticated(!!data.user)
+      // Sauvegarder le token
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token)
+      }
+      
+      setUser(response.data.user || null)
+      setIsAuthenticated(!!response.data.user)
       
       // Rediriger vers la page d'accueil
       window.location.replace('/')
