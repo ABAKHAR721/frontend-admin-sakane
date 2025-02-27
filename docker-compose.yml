@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  frontend:
+    build:
+      context: .
+    image: sakane-frontend:latest  # Suppression du tag basé sur GIT_COMMIT
+    container_name: sakane-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=https://lead.sakane.ma/api
+    command: ["sh", "-c", "bash /var/www/sakane-ask-dash-front/cleanup.sh && npm start"]
