@@ -4,7 +4,8 @@ import { useRouter } from 'next/navigation';
 
 console.log('API URL:', process.env.NEXT_PUBLIC_API_URL || 'https://lead.sakane.ma/api');
 
-const API_URL = 'https://lead.sakane.ma/api';
+// Modifier l'URL de base pour éviter la duplication du segment 'api'
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://lead.sakane.ma';
 console.log('Using API URL:', API_URL);
 
 const axios = Axios.create({

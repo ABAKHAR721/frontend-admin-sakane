@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       console.log('useAuth - Refreshing user')
-      const { data } = await axios.get('/auth/me')
+      const { data } = await axios.get('/api/auth/me')
       console.log('useAuth - User refreshed:', data.user ? 'Found' : 'Not found')
       setUser(data.user)
       setIsAuthenticated(!!data.user)
