@@ -11,12 +11,14 @@ const config = {
     NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
   },
   transpilePackages: ['framer-motion'], // Add framer-motion to transpilePackages
+  experimental: {
+    esmExternals: false // Disable ESM externals to prefer CommonJS modules
+  },
   webpack: (config) => {
     // Add alias for framer-motion
     config.resolve.alias = {
       ...config.resolve.alias,
       '@': '/src',
-      'framer-motion': '/app/src/utils/framer-motion-fix.js'
     };
     
     // Handle CommonJS modules
