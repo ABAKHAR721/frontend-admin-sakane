@@ -1,7 +1,8 @@
 // Fix for framer-motion CommonJS module issue
-import pkg from 'framer-motion';
+const framerMotion = require("framer-motion");
 
-export const motion = pkg.motion;
-export const useIsPresent = pkg.useIsPresent;
-export const AnimatePresence = pkg.AnimatePresence;
-export default pkg;
+// Export all the components and hooks from framer-motion
+module.exports = framerMotion;
+module.exports.motion = framerMotion.motion;
+module.exports.useIsPresent = framerMotion.useIsPresent;
+module.exports.AnimatePresence = framerMotion.AnimatePresence;
