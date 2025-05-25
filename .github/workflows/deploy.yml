@@ -27,7 +27,7 @@ jobs:
           VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
         run: |
           ssh $VPS_USERNAME@$VPS_HOST << 'ENDSSH'
-            cd /var/www/sakane-ask-dash-front
+            cd /var/www/sakane-ask-dash-admin-front
             git pull origin main
             cd /var/www
             docker-compose down
