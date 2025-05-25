@@ -1,6 +1,5 @@
 import { createContext, useContext } from "react";
 import Axios from "axios";
-import { useRouter } from 'next/navigation';
 
 console.log('API URL:', process.env.NEXT_PUBLIC_API_URL || 'https://lead.sakane.ma/api');
 
@@ -9,14 +8,14 @@ const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://lead.sakane.ma';
 console.log('Using API URL:', API_URL);
 
 const axios = Axios.create({
-    baseURL: API_URL,
+    baseURL: API_URL, 
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json'
     }
 });
 
-axios.interceptors.request.use((config) => {
+axios.interceptors.request.use((config) => { 
     if (typeof window !== 'undefined') {
         // Try to get token from cookie first, then localStorage
         const cookieToken = document.cookie.split('; ').find(row => row.startsWith('token='))?.split('=')[1];

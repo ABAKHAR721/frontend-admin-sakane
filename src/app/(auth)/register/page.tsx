@@ -8,7 +8,7 @@ import { useAuth } from '@/hooks/useAuth'
 
 export default function RegisterPage() {
   const { signup } = useAuth()
-  const router = useRouter()
+  const router = useRouter() 
 
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')

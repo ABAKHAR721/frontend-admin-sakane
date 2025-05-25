@@ -16,7 +16,7 @@ export default function RenderRouter({ children }: RenderRouterProps) {
     // Liste des routes publiques
     const publicRoutes = ['/login', '/register'];
     // Liste des routes privées
-    const privateRoutes = ['/dashboard', '/leads', '/my-leads', '/credits', '/requests'];
+    const privateRoutes = ['/admin/dashboard', '/leads', '/my-leads', '/credits', '/requests'];
 
     const currentPath = router.pathname;
 
@@ -24,18 +24,18 @@ export default function RenderRouter({ children }: RenderRouterProps) {
       // Redirection pour les routes publiques
       if (publicRoutes.includes(currentPath)) {
         if (isAuthenticated) {
-          await router.push('/dashboard');
+          await router.push('/admin/dashboard');
         }
       }
       // Redirection pour les routes privées
-      else if (privateRoutes.includes(currentPath)) {
+      else if (privateRoutes.includes(currentPath)) { 
         if (!isAuthenticated) {
           await router.push('/login');
         }
       }
       // Redirection par défaut
       else if (currentPath === '/') {
-        await router.push(isAuthenticated ? '/dashboard' : '/login');
+        await router.push(isAuthenticated ? '/admin/dashboard' : '/login');
       }
     };
 
@@ -44,7 +44,7 @@ export default function RenderRouter({ children }: RenderRouterProps) {
 
   if (loading) {
     return <div>Loading...</div>;
-  }
+  } 
 
   return <>{children}</>;
 }

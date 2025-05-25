@@ -14,7 +14,7 @@ interface User {
 }
 
 interface AuthContextType {
-  user: User | null
+  user: User | null 
   loading: boolean
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<void>
@@ -117,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error('useAuth - Logout error:', error);
       // Even if there's an error, try to clear state and redirect
       setUser(null);
-      setIsAuthenticated(false);
+      setIsAuthenticated(false); 
       window.location.href = '/login';
     }
   }

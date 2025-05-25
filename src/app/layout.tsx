@@ -1,21 +1,25 @@
-import RootLayoutClient from '@/components/RootLayoutClient'
-import './globals.css'
+// src/app/layout.tsx
+
+import './globals.css';
+import RootLayoutClient from '@/components/RootLayoutClient';
 
 export const metadata = {
-  title: 'Sakane Ask Dashboard',
-  description: 'Dashboard for Sakane Ask',
-}
+  title: 'Admin Dashboard Sakane Ask',
+  description: 'Admin Dashboard for Sakane Ask',
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="fr">
       <body className="min-h-screen bg-gray-50">
-        <RootLayoutClient>{children}</RootLayoutClient>
+        <RootLayoutClient>
+          {children}
+        </RootLayoutClient>
       </body>
     </html>
-  )
+  );
 }

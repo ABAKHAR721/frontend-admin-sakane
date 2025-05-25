@@ -2,36 +2,41 @@
 
 import { AuthProvider, useAuth } from '@/hooks/useAuth'
 import { CreditProvider } from '@/contexts/CreditContext'
-import Navigation from '@/components/Navigation'
 import { Toaster } from 'react-hot-toast'
 import { useRouter, usePathname } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+
+// Ajout MUI
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { CssBaseline } from '@mui/material';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+const theme = createTheme(); // Tu peux customiser ton thème ici
 
 function ClientContent({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth()
   const router = useRouter()
   const pathname = usePathname()?.toLowerCase() || ''
   const isAuthRoute = pathname.startsWith('/login') || pathname.startsWith('/register')
-  const isProtectedRoute = pathname.toLowerCase().startsWith('/dashboard') || pathname.toLowerCase().startsWith('/profile')
+  const isProtectedRoute = pathname.startsWith('/admin') || pathname.startsWith('/profile')
 
-  // Handle auth redirects only when auth state is loaded
+  // Gestion de la redirection en fonction de l'authentification
   useEffect(() => {
     if (!loading) {
       const returnTo = new URLSearchParams(window.location.search).get('from')
 
       if (!user && isProtectedRoute) {
-        // Redirect to login if not authenticated and trying to access protected route
         const loginUrl = new URL('/login', window.location.href)
-        loginUrl.searchParams.set('from', pathname.toLowerCase())
+        loginUrl.searchParams.set('from', pathname)
         router.push(loginUrl.pathname + loginUrl.search)
-      } else if (user && isAuthRoute) {
-        // Redirect to dashboard or return URL if authenticated and on auth route
-        router.push(returnTo || '/dashboard')
+      }
+      else if (user && isAuthRoute) {
+        router.push(returnTo || '/admin/dashboard')
       }
     }
   }, [user, loading, isAuthRoute, isProtectedRoute, router, pathname])
 
-  // Show loading state during initial auth check
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -40,18 +45,21 @@ function ClientContent({ children }: { children: React.ReactNode }) {
     )
   }
 
-  // Show nothing while redirecting on protected routes
   if (!user && isProtectedRoute) {
     return null
   }
 
   return (
     <CreditProvider>
-      <div className="min-h-screen">
-        {!isAuthRoute && user && <Navigation />}
-        {children}
-      </div>
-      <Toaster position="top-right" />
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <div className="min-h-screen">
+            {children}
+          </div>
+          <Toaster position="top-right" />
+        </LocalizationProvider>
+      </ThemeProvider>
     </CreditProvider>
   )
 }

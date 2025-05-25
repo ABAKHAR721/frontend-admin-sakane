@@ -6,7 +6,7 @@ import Link from 'next/link'
 import AuthInput from '@/components/forms/AuthInput'
 import { useAuth } from '@/hooks/useAuth'
 
-export default function LoginPage() {
+export default function LoginPage() { 
   const { login, user, loading: authLoading } = useAuth()
   const router = useRouter()
 
