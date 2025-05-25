@@ -105,7 +105,7 @@ export default function UsersPage() {
     if (!window.confirm('Are you sure you want to delete this user? This action is irreversible.')) return;
     try {
       setLoading(true); // Optional: show loading state while deleting
-      await deleteUser(userId);
+      await deleteUser(Number(userId));
       fetchUsers(); // Refresh list
     } catch (error) {
       console.error('Failed to delete user:', error);
@@ -152,7 +152,7 @@ export default function UsersPage() {
       setEditingBalanceUserId(null); // Exit editing mode immediately
 
 
-      await updateUserBalance(userId, numericNewBalance);
+      await updateUserBalance(Number(userId), numericNewBalance);
       // No need to fetchUsers() immediately after optimistic update,
       // but you might want to if the backend does more complex calculations
       // or if you need to ensure data consistency.
@@ -185,7 +185,7 @@ export default function UsersPage() {
 
       if (selectedUser) {
         // Update existing user
-        await updateUser(selectedUser.id, payload);
+        await updateUser(Number(selectedUser.id), payload);
         alert('User updated successfully!'); // Success feedback
       } else {
         // Create new user

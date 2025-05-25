@@ -1,10 +1,10 @@
-import { Navigate, RouteObject } from 'react-router-dom';
-import AdminLayout from '../components/admin/layout/adminLayout';
-import DashboardPage from '../pages/admin/dashboard';
-import UsersPage from '../pages/admin/users';
+import { Navigate, Outlet, RouteObject } from 'react-router-dom';
+import AdminLayout from '../components/admin/layout/AdminLayout';
+import DashboardPage from '../app/admin/dashboard/page';
+import UsersPage from '../app/admin/users/page';
 import LeadsPage from '../app/admin/leads/page';
-import TransactionsPage from '../pages/admin/transactions';
-import StatsPage from '../pages/admin/stats';
+import TransactionsPage from '../app/admin/transactions/page';
+import StatsPage from '../app/admin/stats/page';
 
 // Auth guard component
 const AdminGuard = ({ children }: { children: React.ReactNode }) => {
@@ -18,8 +18,10 @@ export const adminRoutes: RouteObject[] = [
     path: '/admin/dashboard',
     element: (
       <AdminGuard>
-        <AdminLayout />
-      </adminGuard>
+        <AdminLayout>
+          <Outlet />
+        </AdminLayout>
+      </AdminGuard>
     ),
     children: [
       {

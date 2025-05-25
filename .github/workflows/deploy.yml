@@ -29,7 +29,7 @@ jobs:
             cd /var/www/sakane-ask-dash-admin-front
             git pull origin main
             cd /var/www
-            docker-compose down admin-frontend
-            docker-compose build --no-cache admin-frontend
-            docker-compose up -d admin-frontend
+            docker-compose down
+            docker-compose build --no-cache frontend
+            docker-compose up -d
           ENDSSH

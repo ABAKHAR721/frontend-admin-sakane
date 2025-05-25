@@ -131,7 +131,7 @@ export default function LeadsPage() {
         setUserDetailsOpen(true);
 
         try {
-            const { data } = await getUserDetails(userId);
+            const { data } = await getUserDetails(Number(userId));
             setSelectedUserDetails(data);
         } catch (error) {
             console.error('Failed to fetch user details:', error);
