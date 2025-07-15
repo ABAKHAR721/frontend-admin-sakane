@@ -10,6 +10,8 @@ const adminApi = axios.create({
   withCredentials: true,
 });
 
+
+
 // ✅ Request Interceptor: Add token from localStorage or cookies
 adminApi.interceptors.request.use((config) => {
   const localToken = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
@@ -75,11 +77,33 @@ export const getAllLeadsWithPurchaseInfo = (params: { page: number; limit: numbe
 export const getTransactions = (params: any) => adminApi.get('/transactions', { params });
 
 // Statistics
-export const getStatistics = (params: any) => adminApi.get('/stats', { params });
+export const getStatistics = (params: { from: string; to: string; user?: string }) => {
+  console.log('Fetching statistics with params:', params);
+  return adminApi.get('/stats', { 
+    params: {
+      from: params.from,
+      to: params.to,
+      ...(params.user && { user: params.user })
+    }
+  });
+};
 
 // Dashboard
-export const getDashboardToday = () => adminApi.get('/dashboard/today');
-export const getDashboardGraph = (params: any) => adminApi.get('/dashboard/graph', { params });
+export const getDashboardToday = () => {
+  console.log('Fetching today\'s dashboard data');
+  return adminApi.get('/dashboard/today');
+};
+
+export const getDashboardGraph = (params: { period?: string; from?: string; to?: string }) => {
+  console.log('Fetching dashboard graph with params:', params);
+  return adminApi.get('/dashboard/graph', { 
+    params: {
+      period: params.period || 'week',
+      ...(params.from && { from: params.from }),
+      ...(params.to && { to: params.to })
+    }
+  });
+};
 
 // Users Balance
 export const updateUserBalance = (id: number, balance: number) => adminApi.put(`/balance/${id}`, { balance });
@@ -87,4 +111,6 @@ export const updateUserBalance = (id: number, balance: number) => adminApi.put(`
 
 // Audit Logs
 export const getAuditLogs = () => adminApi.get('/audit-logs');
+
+
 export default adminApi;

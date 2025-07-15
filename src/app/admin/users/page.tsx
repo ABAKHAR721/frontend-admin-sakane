@@ -153,11 +153,10 @@ export default function UsersPage() {
 
 
       await updateUserBalance(Number(userId), numericNewBalance);
-      // No need to fetchUsers() immediately after optimistic update,
-      // but you might want to if the backend does more complex calculations
-      // or if you need to ensure data consistency.
-      // For robustness, let's keep fetchUsers() for now.
-      await fetchUsers();
+
+      // Add a delay before fetching users to avoid read-after-write lag
+      setTimeout(fetchUsers, 500);
+
 
 
       setNewBalance('');

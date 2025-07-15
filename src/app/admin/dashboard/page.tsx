@@ -97,18 +97,43 @@ export default function DashboardPage() {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
+      
+      // Format dates for the API
+      const from = fromDate?.format('YYYY-MM-DD') || dayjs().subtract(7, 'day').format('YYYY-MM-DD');
+      const to = toDate?.format('YYYY-MM-DD') || dayjs().format('YYYY-MM-DD');
+      
+      console.log('Fetching dashboard data for period:', { from, to, period });
+      
       const [todayResponse, graphResponse] = await Promise.all([
-        getDashboardToday(), // reste inchangé
+        getDashboardToday(),
         getDashboardGraph({
           period,
-          from: fromDate?.format('YYYY-MM-DD'),
-          to: toDate?.format('YYYY-MM-DD'),
+          from,
+          to,
         }),
       ]);
+      
+      console.log('Dashboard data received:', { 
+        today: todayResponse.data,
+        graph: graphResponse.data 
+      });
+      
       setTodayData(todayResponse.data);
       setGraphData(graphResponse.data);
     } catch (error) {
       console.error('Failed to fetch dashboard data:', error);
+      // Set default data to prevent UI breaking
+      setTodayData({
+        new_leads: 0,
+        purchased_leads: 0,
+        credits_purchased: 0,
+        new_users: 0
+      });
+      setGraphData({
+        leads: [],
+        credits: [],
+        labels: []
+      });
     } finally {
       setLoading(false);
     }
