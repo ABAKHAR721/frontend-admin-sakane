@@ -50,13 +50,38 @@ export default function StatsPage() {
   const fetchStats = async () => {
     try {
       setLoading(true);
-      const { data } = await getStatistics({
-        from: fromDate.format('YYYY-MM-DD'),
-        to: toDate.format('YYYY-MM-DD')
+      
+      // Ensure we have valid dates
+      const from = fromDate?.format('YYYY-MM-DD') || dayjs().subtract(7, 'day').format('YYYY-MM-DD');
+      const to = toDate?.format('YYYY-MM-DD') || dayjs().format('YYYY-MM-DD');
+      
+      console.log('Fetching stats for period:', { from, to });
+      
+      const { data } = await getStatistics({ from, to });
+      
+      console.log('Stats data received:', data);
+      
+      setStats({
+        total_users: data?.total_users || 0,
+        total_leads: data?.total_leads || 0,
+        sold_leads: data?.sold_leads || 0,
+        total_credits: data?.total_credits || 0,
+        spent_credits: data?.spent_credits || 0,
+        leadsData: data?.leadsData || [],
+        creditsData: data?.creditsData || []
       });
-      setStats(data);
     } catch (error) {
       console.error('Failed to fetch statistics:', error);
+      // Set default stats to prevent UI breaking
+      setStats({
+        total_users: 0,
+        total_leads: 0,
+        sold_leads: 0,
+        total_credits: 0,
+        spent_credits: 0,
+        leadsData: [],
+        creditsData: []
+      });
     } finally {
       setLoading(false);
     }
