@@ -106,7 +106,7 @@ export const getDashboardGraph = (params: { period?: string; from?: string; to?:
 };
 
 // Users Balance
-export const updateUserBalance = (id: number, balance: number) => adminApi.put(`/balance/${id}`, { balance });
+export const updateUserBalance = (id: string, balance: number) => adminApi.put(`/balance/${id}`, { balance });
 
 
 // Audit Logs

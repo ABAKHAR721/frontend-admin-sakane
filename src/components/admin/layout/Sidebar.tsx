@@ -16,6 +16,7 @@ export default function Sidebar() {
     { name: 'Users', path: '/admin/users' },
     { name: 'Statistics', path: '/admin/stats' },
     { name: 'Transactions', path: '/admin/transactions' },
+    { name: 'Confirmations', path: '/admin/confirmations' },
     { name: 'Logs', path: '/admin/logs' },
   ]
 

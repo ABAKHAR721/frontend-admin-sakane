@@ -152,7 +152,7 @@ export default function UsersPage() {
       setEditingBalanceUserId(null); // Exit editing mode immediately
 
 
-      await updateUserBalance(Number(userId), numericNewBalance);
+      await updateUserBalance(userId, numericNewBalance);
       // Add a delay before fetching users to avoid read-after-write lag
       setTimeout(fetchUsers, 500);
 

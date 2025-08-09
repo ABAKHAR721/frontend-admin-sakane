@@ -110,6 +110,7 @@ export default function LeadsPage() {
                 });
                 setLeads(data.leads);
                 setTotal(data.total);
+                 // Log the name of the 31st lead's first purchase user
             } catch (error) {
                 console.error('Failed to fetch leads:', error);
             } finally {
@@ -223,6 +224,7 @@ export default function LeadsPage() {
                             </TableHead>
                             <TableBody>
                                 {leads.map((lead) => {
+                                    // console.log('Fetched leads:', data.leads[30].purchases[0].user.id);
                                     const purchase = lead.purchases?.[0];
                                     const isPurchased = lead.purchases.length > 0;
                                     return (
@@ -251,7 +253,7 @@ export default function LeadsPage() {
                                             </TableCell>
                                             <TableCell>
                                                 <a href={`mailto:${lead.contact_email}`}>{lead.contact_email}</a>
-                                            </TableCell>
+                                            </TableCell> 
                                             <TableCell>
                                                 {purchase?.user?.name ? (
                                                     <BuyerName onClick={() => handleOpenDetails(purchase.user.id)}>
