@@ -29,7 +29,7 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_ed25519 $VPS_USERNAME@$VPS_HOST << 'ENDSSH'
             set -e
-            cd /var/www/sakane-ask-dash-front
+            cd /var/www/sakane-ask-dash-admin-front
             git pull origin main
 
             cd /var/www
