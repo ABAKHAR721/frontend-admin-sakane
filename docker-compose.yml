@@ -10,5 +10,5 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - NEXT_PUBLIC_API_URL=https://lead.sakane.ma
+      - NEXT_PUBLIC_API_URL=https://admin.sakane.ma
     command: ["sh", "-c", "bash /app/cleanup.sh && npm start"]
