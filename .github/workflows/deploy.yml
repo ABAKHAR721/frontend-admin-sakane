@@ -30,7 +30,10 @@ jobs:
           ssh -i ~/.ssh/id_ed25519 $VPS_USERNAME@$VPS_HOST << 'ENDSSH'
             set -e
             cd /var/www/sakane-ask-dash-admin-front
-            git pull origin main
+
+            # Discard local changes and sync with remote
+            git fetch --all
+            git reset --hard origin/main
 
             cd /var/www
             docker-compose down
