@@ -1,4 +1,4 @@
-name: Deploy to VPS
+name: Deploy Admin Frontend to VPS
 
 on:
   push:
@@ -13,7 +13,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Decode your base64 SSH key and set permissions
       - name: Prepare SSH key
         run: |
           mkdir -p ~/.ssh
@@ -21,7 +20,6 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
-      # Deploy via SSH
       - name: Deploy to VPS
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
@@ -29,14 +27,13 @@ jobs:
         run: |
           ssh -i ~/.ssh/id_ed25519 $VPS_USERNAME@$VPS_HOST << 'ENDSSH'
             set -e
-            cd /var/www/sakane-ask-dash-admin-front
 
-            # Discard local changes and sync with remote
+            # Update admin frontend code
+            cd /var/www/sakane-ask-dash-admin-front
             git fetch --all
             git reset --hard origin/main
 
+            # Rebuild only admin-frontend service without touching other containers
             cd /var/www
-            docker-compose down
-            docker-compose build --no-cache frontend
-            docker-compose up -d
+            docker-compose up -d --no-deps --build admin-frontend
           ENDSSH
