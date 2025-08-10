@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://lead.sakane.ma';
 
 const adminApi = axios.create({
   baseURL: `${API_URL}/api/admin`,
@@ -9,6 +9,7 @@ const adminApi = axios.create({
   },
   withCredentials: true,
 });
+console.log('nchofo had used url ash ghadi ykon fih',process.env.NEXT_PUBLIC_API_URL)
 
 
 
