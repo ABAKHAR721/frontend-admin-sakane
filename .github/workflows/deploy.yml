@@ -8,36 +8,30 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Decode SSH key
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Decode your base64 SSH key and set permissions
+      - name: Prepare SSH key
         run: |
           mkdir -p ~/.ssh
           echo "${{ secrets.SSH_PRIVATE_KEY_B64 }}" | base64 -d > ~/.ssh/id_ed25519
           chmod 600 ~/.ssh/id_ed25519
-
-        
-
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: |
-            $(cat ~/.ssh/id_ed25519)
-
-      - name: Add known hosts
-        run: |
-          mkdir -p ~/.ssh
           ssh-keyscan -H ${{ secrets.VPS_HOST }} >> ~/.ssh/known_hosts
 
+      # Deploy via SSH
       - name: Deploy to VPS
         env:
           VPS_HOST: ${{ secrets.VPS_HOST }}
           VPS_USERNAME: ${{ secrets.VPS_USERNAME }}
         run: |
-          ssh $VPS_USERNAME@$VPS_HOST << 'ENDSSH'
+          ssh -i ~/.ssh/id_ed25519 $VPS_USERNAME@$VPS_HOST << 'ENDSSH'
+            set -e
             cd /var/www/sakane-ask-dash-front
             git pull origin main
+
             cd /var/www
             docker-compose down
             docker-compose build --no-cache frontend
